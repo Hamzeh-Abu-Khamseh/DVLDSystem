@@ -551,12 +551,6 @@
     <None Include="Resources\User Settings.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PeopleBusinessLayer\BusinessLayer.csproj">
-      <Project>{ed2b6ba0-edde-4c2e-9c9a-a07181e680d2}</Project>
-      <Name>BusinessLayer</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Multicultural People.png" />
   </ItemGroup>
   <ItemGroup>
@@ -1011,6 +1005,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\photo_2025-06-09_22-08-05 %282%29.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="PeopleBusinessLayer\BusinessLayer.csproj">
+      <Project>{ed2b6ba0-edde-4c2e-9c9a-a07181e680d2}</Project>
+      <Name>BusinessLayer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
