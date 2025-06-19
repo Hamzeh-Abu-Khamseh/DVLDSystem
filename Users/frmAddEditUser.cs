@@ -1,4 +1,5 @@
-﻿using PeopleBusinessLayer;
+﻿using DVLDSystem.Global_Classes;
+using PeopleBusinessLayer;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -130,7 +131,8 @@ namespace DVLDSystem
                 MessageBox.Show("Passwords should be identical");
                 return;
             }
-            _User.Password = txtPassword.Text;
+
+            _User.Password = clsUtil.ComputeHash(txtPassword.Text);
             _User.PersonID = ctrlPersonCardWithFilter1.PersonID;
             if (_User.Save())
             {

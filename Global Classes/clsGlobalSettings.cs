@@ -1,5 +1,6 @@
 ﻿using PeopleBusinessLayer;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 
@@ -88,6 +89,26 @@ internal class clsGlobalSettings
         {
             MessageBox.Show($"An error occurred: {ex.Message}");
             return false;
+        }
+
+    }
+
+    public static void LogError(string Message, EventLogEntryType LogType, string SourceName = "DVLD_App")
+    {
+        try
+        {
+
+            if (!EventLog.SourceExists(SourceName))
+            {
+                EventLog.CreateEventSource(SourceName, "Application");
+
+            }
+            EventLog.WriteEntry(SourceName, Message, LogType);
+
+        }
+        catch (Exception ex)
+        {
+          
         }
 
     }

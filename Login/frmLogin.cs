@@ -1,6 +1,9 @@
-﻿using PeopleBusinessLayer;
+﻿using DVLDSystem.Global_Classes;
+using PeopleBusinessLayer;
 using System;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using System.Windows.Forms;
 
 
@@ -9,7 +12,7 @@ namespace DVLDSystem
     public partial class frmLogin : Form
     {
         private string filePath = Application.StartupPath + @"\rememberme.txt";
-
+        private short _Trials = 0;
 
         private clsUsers _User = new clsUsers();
 
@@ -44,38 +47,51 @@ namespace DVLDSystem
                 writer.WriteLine(Password); 
             }
         }
-       
 
-
+        
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            _User = clsUsers.FindByUsernameAndPassword(txtUserName.Text, txtPassword.Text);
-  
-            if(_User==null) 
-            {
-                MessageBox.Show("Invalid username or password.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            if(_User.IsActive== false)
-            {
-                MessageBox.Show("User is Inactive, please contact your admin.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }         
+            string HashedPassword = clsUtil.ComputeHash(txtPassword.Text);
+            _User = clsUsers.FindByUsernameAndPassword(txtUserName.Text, HashedPassword);
+            
 
-            clsGlobalSettings.CurrentUser = _User;
-
-            if (chkRememberMe.Checked)
+            if (_Trials < 3)
             {
-                SaveUserNameAndPassword(txtUserName.Text,txtPassword.Text);
+                if (_User == null)
+                {
+                    MessageBox.Show("Invalid username or password.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    txtPassword.Focus();
+                    _Trials++;
+                    return;
+                }
+                if (_User.IsActive == false)
+                {
+                    MessageBox.Show("User is Inactive, please contact your admin.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    txtUserName.Focus();
+                    return;
+                }
+
+                clsGlobalSettings.CurrentUser = _User;
+
+                if (chkRememberMe.Checked)
+                {
+                    SaveUserNameAndPassword(txtUserName.Text, txtPassword.Text);
+                }
+                else
+                {
+                    SaveUserNameAndPassword("", "");
+                }
+                this.Hide();
+                frmMain mainForm = new frmMain();
+                mainForm.FormClosed += (s, args) => this.Close(); // closes the app when main form is closed
+                mainForm.Show();
             }
             else
             {
-                SaveUserNameAndPassword("","");
+                MessageBox.Show("You have exceeded the maximum number of login attempts.", "Login Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                clsGlobalSettings.LogError(  "User exceeded maximum login attempts", System.Diagnostics.EventLogEntryType.Warning);
+                this.Close();
             }
-            this.Hide();
-            frmMain mainForm = new frmMain();
-            mainForm.FormClosed += (s, args) => this.Close(); // closes the app when main form is closed
-            mainForm.Show();
 
             
 

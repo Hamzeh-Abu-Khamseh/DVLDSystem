@@ -1,4 +1,5 @@
-﻿using PeopleBusinessLayer;
+﻿using DVLDSystem.Global_Classes;
+using PeopleBusinessLayer;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -55,7 +56,7 @@ namespace DVLDSystem
                 MessageBox.Show("Some Fields are not valid!, put the mouse over the red icon(s) to see the error","Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            _User.Password = txtNewPass.Text;
+            _User.Password = clsUtil.ComputeHash(txtNewPass.Text);
             if(_User.Save())
             {
                 MessageBox.Show("Password Updated Successfully", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -81,7 +82,7 @@ namespace DVLDSystem
             }
             ;
 
-            if (_User.Password != txtCurrentPass.Text.Trim())
+            if (_User.Password != clsUtil.ComputeHash(txtCurrentPass.Text.Trim()))
             {
                 e.Cancel = true;
                 errorProvider1.SetError(txtCurrentPass, "Current password is wrong!");
@@ -90,7 +91,8 @@ namespace DVLDSystem
             else
             {
                 errorProvider1.SetError(txtCurrentPass, null);
-            };
+            }
+            ;
             
         }
 
